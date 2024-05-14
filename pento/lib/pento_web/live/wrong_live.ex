@@ -1,6 +1,5 @@
 defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
-  alias Pento.Accounts
 
   def mount(_params, session, socket) do
     winning_num = Enum.random(1..10)
@@ -67,7 +66,6 @@ defmodule PentoWeb.WrongLive do
     <br />
     <pre>
       <%= @current_user.email %>
-      <%= @session_id %>
     </pre>
     """
   end
