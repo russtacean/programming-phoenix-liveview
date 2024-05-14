@@ -1,20 +1,35 @@
 defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
+  alias Pento.Accounts
 
-  def mount(_params, _session, socket) do
-    init_game(socket, :ok)
-  end
-
-  def handle_params(_unsigned_params, _uri, socket) do
-    init_game(socket, :noreply)
-  end
-
-  defp init_game(socket, param_atom) do
+  def mount(_params, session, socket) do
     winning_num = Enum.random(1..10)
 
     {
-      param_atom,
-      assign(socket, winning_num: winning_num, score: 0, isWin: false, message: "Make a guess:")
+      :ok,
+      assign(
+        socket,
+        winning_num: winning_num,
+        score: 0,
+        isWin: false,
+        message: "Make a guess:",
+        session_id: session["live_socket_id"]
+      )
+    }
+  end
+
+  def handle_params(_unsigned_params, _uri, socket) do
+    winning_num = Enum.random(1..10)
+
+    {
+      :noreply,
+      assign(
+        socket,
+        winning_num: winning_num,
+        score: 0,
+        isWin: false,
+        message: "Make a guess:"
+      )
     }
   end
 
@@ -49,6 +64,11 @@ defmodule PentoWeb.WrongLive do
         </.link>
       </h2>
     <% end %>
+    <br />
+    <pre>
+      <%= @current_user.email %>
+      <%= @session_id %>
+    </pre>
     """
   end
 
