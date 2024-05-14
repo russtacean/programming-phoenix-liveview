@@ -2,7 +2,20 @@ defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, score: 0, time: time(), message: "Make a guess:")}
+    init_game(socket, :ok)
+  end
+
+  def handle_params(_unsigned_params, _uri, socket) do
+    init_game(socket, :noreply)
+  end
+
+  defp init_game(socket, param_atom) do
+    winning_num = Enum.random(1..10)
+
+    {
+      param_atom,
+      assign(socket, winning_num: winning_num, score: 0, isWin: false, message: "Make a guess:")
+    }
   end
 
   @spec render(any) :: Phoenix.LiveView.Rendered.t()
@@ -10,7 +23,7 @@ defmodule PentoWeb.WrongLive do
     ~H"""
     <h1 class="mb-4 text-4xl font-extrabold">Your score: <%= @score %></h1>
     <h2>
-      <%= @message %> It's <%= @time %>
+      <%= @message %>
     </h2>
     <br />
     <h2>
@@ -24,20 +37,43 @@ defmodule PentoWeb.WrongLive do
         </.link>
       <% end %>
     </h2>
+    <%= if @isWin do %>
+      <br />
+      <h2>
+        Would you like to restart?
+        <.link
+          patch={~p"/guess"}
+          class="bg-blue-500 hover: bg-blue-700 text-white font-bold py-2 px-4 border border-blue-700 rounded m-1"
+        >
+          Restart
+        </.link>
+      </h2>
+    <% end %>
     """
   end
 
   def handle_event("guess", %{"number" => guess}, socket) do
-    message = "Your guess: #{guess}. Wrong. Guess again"
-    score = socket.assigns.score - 1
+    winning_num = socket.assigns.winning_num
+    isWin = String.to_integer(guess) == winning_num
+    messagePrefix = "Your guess #{guess}."
+
+    message =
+      if isWin do
+        "#{messagePrefix} Right. You win!"
+      else
+        "#{messagePrefix} Wrong. Guess again"
+      end
+
+    score =
+      if isWin do
+        socket.assigns.score + 10
+      else
+        socket.assigns.score - 1
+      end
 
     {
       :noreply,
-      assign(socket, message: message, score: score, time: time())
+      assign(socket, winning_num: winning_num, message: message, score: score, isWin: isWin)
     }
-  end
-
-  def time() do
-    DateTime.utc_now() |> to_string
   end
 end
