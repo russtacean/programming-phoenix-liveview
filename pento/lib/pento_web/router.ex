@@ -17,12 +17,6 @@ defmodule PentoWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", PentoWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
-  end
-
   # Other scopes may use custom stacks.
   # scope "/api", PentoWeb do
   #   pipe_through :api
@@ -49,6 +43,8 @@ defmodule PentoWeb.Router do
 
   scope "/", PentoWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
+
+    get "/", PageController, :home
 
     live_session :redirect_if_user_is_authenticated,
       on_mount: [{PentoWeb.UserAuth, :redirect_if_user_is_authenticated}] do
