@@ -146,11 +146,19 @@ defmodule PentoWeb.UserAuth do
       end
   """
   def on_mount(:mount_current_user, _params, session, socket) do
-    {:cont, mount_current_user(socket, session)}
+    socket =
+      socket
+      |> mount_current_user(session)
+      |> mount_session_id(session)
+
+    {:cont, socket}
   end
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_current_user(socket, session)
+    socket =
+      socket
+      |> mount_current_user(session)
+      |> mount_session_id(session)
 
     if socket.assigns.current_user do
       {:cont, socket}
@@ -165,7 +173,10 @@ defmodule PentoWeb.UserAuth do
   end
 
   def on_mount(:redirect_if_user_is_authenticated, _params, session, socket) do
-    socket = mount_current_user(socket, session)
+    socket =
+      socket
+      |> mount_current_user(session)
+      |> mount_session_id(session)
 
     if socket.assigns.current_user do
       {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
@@ -178,6 +189,14 @@ defmodule PentoWeb.UserAuth do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
         Accounts.get_user_by_session_token(user_token)
+      end
+    end)
+  end
+
+  defp mount_session_id(socket, session) do
+    Phoenix.Component.assign_new(socket, :session_id, fn ->
+      if session_id = session["live_socket_id"] do
+        session_id
       end
     end)
   end

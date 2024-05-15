@@ -1,7 +1,7 @@
 defmodule PentoWeb.WrongLive do
   use PentoWeb, :live_view
 
-  def mount(_params, session, socket) do
+  def mount(_params, _session, socket) do
     winning_num = Enum.random(1..10)
 
     {
@@ -11,8 +11,7 @@ defmodule PentoWeb.WrongLive do
         winning_num: winning_num,
         score: 0,
         isWin: false,
-        message: "Make a guess:",
-        session_id: session["live_socket_id"]
+        message: "Make a guess:"
       )
     }
   end
@@ -66,6 +65,7 @@ defmodule PentoWeb.WrongLive do
     <br />
     <pre>
       <%= @current_user.email %>
+      <%= @session_id %>
     </pre>
     """
   end
