@@ -101,4 +101,22 @@ defmodule Pento.Catalog do
   def change_product(%Product{} = product, attrs \\ %{}) do
     Product.changeset(product, attrs)
   end
+
+  @doc """
+  Updates a product's unit price, only allows markdown of price from current price.
+
+  ## Examples
+
+      iex> markdown_product(product, %{unit_price: new_value})
+      {:ok, %Product{}}
+
+      iex> markdown_product(product, %{unit_price: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def markdown_product(%Product{} = product, attrs \\ %{}) do
+    product
+    |> Product.unit_price_changeset(attrs)
+    |> Repo.update()
+  end
 end
