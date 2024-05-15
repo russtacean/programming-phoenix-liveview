@@ -65,6 +65,13 @@ defmodule PentoWeb.Router do
       on_mount: [{PentoWeb.UserAuth, :ensure_authenticated}] do
       live "/guess", WrongLive
 
+      live "/frequently_asked_questions", FrequentlyAskedQuestionLive.Index, :index
+      live "/frequently_asked_questions/new", FrequentlyAskedQuestionLive.Index, :new
+      live "/frequently_asked_questions/:id/edit", FrequentlyAskedQuestionLive.Index, :edit
+
+      live "/frequently_asked_questions/:id", FrequentlyAskedQuestionLive.Show, :show
+      live "/frequently_asked_questions/:id/show/edit", FrequentlyAskedQuestionLive.Show, :edit
+
       live "/products", ProductLive.Index, :index
       live "/products/new", ProductLive.Index, :new
       live "/products/:id/edit", ProductLive.Index, :edit

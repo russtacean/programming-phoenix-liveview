@@ -1,0 +1,28 @@
+<.header>
+  Frequently asked question <%= @frequently_asked_question.id %>
+  <:subtitle>This is a frequently_asked_question record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/frequently_asked_questions/#{@frequently_asked_question}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit frequently_asked_question</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Question"><%= @frequently_asked_question.question %></:item>
+  <:item title="Answer"><%= @frequently_asked_question.answer %></:item>
+  <:item title="Vote score"><%= @frequently_asked_question.vote_score %></:item>
+</.list>
+
+<.back navigate={~p"/frequently_asked_questions"}>Back to frequently_asked_questions</.back>
+
+<.modal :if={@live_action == :edit} id="frequently_asked_question-modal" show on_cancel={JS.patch(~p"/frequently_asked_questions/#{@frequently_asked_question}")}>
+  <.live_component
+    module={PentoWeb.FrequentlyAskedQuestionLive.FormComponent}
+    id={@frequently_asked_question.id}
+    title={@page_title}
+    action={@live_action}
+    frequently_asked_question={@frequently_asked_question}
+    patch={~p"/frequently_asked_questions/#{@frequently_asked_question}"}
+  />
+</.modal>
